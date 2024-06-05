@@ -1,0 +1,56 @@
+@import "./flex.scss";
+
+* {
+    box-sizing: border-box;
+}
+
+.pointer {
+    cursor: pointer;
+}
+
+.no-select {
+    user-select: none;
+}
+
+.button {
+    @extend .pointer;
+    @extend .no-select;
+}
+
+html,
+body {
+    width: 100%;
+    height: 100%;
+}
+
+body {
+    padding: 0px;
+    margin: 0px;
+    background: #f5f7f9 !important;
+}
+
+
+.scroll-y {
+    overflow-y: auto;
+}
+
+.w-100 {
+    width: 100%;
+}
+
+.h-100 {
+    height: 100%;
+}
+
+.wh-100 {
+    @extend .w-100;
+    @extend .h-100;
+}
+
+.w-0 {
+    width: 0;
+}
+
+.h-0 {
+    height: 0;
+}

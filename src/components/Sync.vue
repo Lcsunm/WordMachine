@@ -16,12 +16,13 @@
                 </div>
             </VueDraggable>
             <div class="flex-h left">
+                <button @click="clearWords">清空单词</button>
                 <button @click="createBook">导出课本</button>
                 <button :disabled="!connected" @click="syncBook">同步课本</button>
             </div>
         </div>
         <div class="Line"></div>
-        <div class="flex-1 flex-v left">
+        <div class="List flex-1 flex-v left">
             <div class="Label">搜索单词</div>
             <input type="text" v-model="mKeyword" />
             <VueDraggable class="Items w-100 flex-1 scroll-y" v-model="mWords" :sort="false"
@@ -36,6 +37,17 @@
                     <div class="Explain">{{item.explain}}</div>
                 </div>
             </VueDraggable>
+            <div class="flex-h left">
+                <button @click="batchAdd">批量添加</button>
+            </div>
+            <div v-if="mBatchAdd.show" class="BatchAdd" @click.stop="{}">
+                <div class="Content wh-100 flex-v">
+                    <div class="Title">批量添加 每行一个单词</div>
+                    <textarea class="Input flex-1" v-model="mBatchAdd.text"></textarea>
+                    <button @click="batchAdd_Run">添加</button>
+                    <div class="Close button" @click="batchAdd_Close">关闭</div>
+                </div>
+            </div>
         </div>
     </div>
 </template>
@@ -96,6 +108,10 @@ export default class Sync extends Vue {
     mKeyword = "";
 
     mWords: any[] = [];
+    mBatchAdd = {
+        show: false,
+        text: "",
+    }
 
     onChange_File(e) {
         let file = e.target.files?.[0];
@@ -114,6 +130,13 @@ export default class Sync extends Vue {
         }
         keyword = keyword.toLowerCase();
         this.mWords = words.filter(o => o.word.toLowerCase().includes(keyword)).slice(0, 100);
+    }
+
+    @Watch("mBatchAdd.show")
+    onChange_BatchAddShow(value: boolean) {
+        if (!value) {
+            this.mBatchAdd.text = "";
+        }
     }
 
     mounted() {
@@ -232,6 +255,33 @@ export default class Sync extends Vue {
     handleDelete(item, index) {
         this.mBook.words.splice(index, 1);
     }
+
+    clearWords() {
+        this.mBook.words = [];
+    }
+
+    batchAdd() {
+        this.mBatchAdd.show = true;
+    }
+
+    batchAdd_Run() {
+        let items = this.mBatchAdd.text.trim().split("\n");
+        items.forEach(item => {
+            let word = words.find(o => o.word == item);
+            if (!word) {
+                return;
+            }
+            if (this.mBook.words.some(o => o.id == word!.id)) {
+                return;
+            }
+            this.mBook.words.push(word);
+        });
+        this.mBatchAdd.show = false;
+    }
+
+    batchAdd_Close() {
+        this.mBatchAdd.show = false;
+    }
 }
 </script>
 
@@ -281,6 +331,34 @@ export default class Sync extends Vue {
                 color: red;
                 font-size: 12px;
                 margin-left: 20px;
+            }
+        }
+    }
+    .List {
+        position: relative;
+        .BatchAdd {
+            background: rgba($color: #000000, $alpha: 0.5);
+            position: absolute;
+            left: -10px;
+            top: -10px;
+            right: -10px;
+            bottom: -10px;
+            border-radius: 10px;
+            .Content {
+                padding: 30px;
+                .Title {
+                    font-size: 20px;
+                    color: white;
+                }
+                .Input {
+                    margin: 20px 0;
+                }
+            }
+            .Close {
+                position: absolute;
+                right: 30px;
+                top: 20px;
+                color: white;
             }
         }
     }

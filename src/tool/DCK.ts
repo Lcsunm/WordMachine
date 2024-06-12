@@ -81,7 +81,7 @@ export const p = {
             return;
         }
         characteristic.writeValue(s).then((res) => {
-            console.log(true);
+            // console.log(true);
         }).catch(err => {
             console.log(err);
         });

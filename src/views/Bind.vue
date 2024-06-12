@@ -1,29 +1,38 @@
 <template>
-    <div class="Bind flex-v left">
-        <button v-if="!mConnected" @click="handleTest">连接</button>
-        <template v-if="mConnected">
-            <button @click="disconnect">取消连接</button>
-            <button @click="bindDevice">绑定设备</button>
-            <button @click="getSystemInfo">获取系统信息</button>
-            <button @click="getDeviceStatus">获取设备信息</button>
-            <!-- <div class="flex-h">
-                <van-field v-model="mBookId" type="digit" label="课本ID" />
-                <van-button @click="syncBook">同步课本ID</van-button>
-            </div> -->
-        </template>
-        <div class="Info flex-v">
-            <div class="Item flex-h" v-for="(item,index) in mInfo" :key="index">
-                <div class="Label">{{item.label}}</div>
-                <div class="Value">{{item.value}}</div>
+    <div class="Bind wh-100 flex-h">
+        <div class="Layout flex-v left">
+            <button v-if="!mConnected" @click="handleTest">连接</button>
+            <template v-if="mConnected">
+                <button @click="disconnect">取消连接</button>
+                <button @click="bindDevice">激活设备</button>
+                <button @click="getSystemInfo">获取系统信息</button>
+                <button @click="getDeviceStatus">获取设备信息</button>
+            </template>
+            <div class="Info flex-v">
+                <div class="Item flex-v" v-for="(item,index) in mInfo" :key="index">
+                    <div class="Label">{{item.label}}</div>
+                    <div class="Value">{{item.value}}</div>
+                </div>
             </div>
         </div>
+        <div class="Line"></div>
+        <Sync class="flex-1" :connected="mConnected" :print="print"></Sync>
     </div>
 </template>
 
 <script lang="ts">
 import { Vue, Component, Prop, Watch } from "vue-property-decorator";
 import { l, p, h, g, v, e, y, a, callback, setCharacteristic } from "@/tool/DCK";
-@Component
+// import XLSX from "xlsx";
+import Sync from "@/components/Sync.vue";
+
+export const OpenSource = "开源地址:https://github.com/Lcsunm/WordMachine";
+
+@Component({
+    components: {
+        Sync,
+    }
+})
 export default class Bind extends Vue {
 
     mCharacteristic!: BluetoothRemoteGATTCharacteristic;
@@ -31,6 +40,7 @@ export default class Bind extends Vue {
     mBookId = 49;
 
     mInfo: { label: string, value: string }[] = [];
+
 
     @Watch("mConnected")
     onChange_Connected(value) {
@@ -42,6 +52,8 @@ export default class Bind extends Vue {
     mounted() {
 
     }
+
+
     handleTest() {
         navigator.bluetooth.requestDevice({
             // acceptAllDevices:true,
@@ -54,21 +66,11 @@ export default class Bind extends Vue {
                 "0000ae3c-0000-1000-8000-00805f9b34fb",
             ],
         }).then((device) => {
-            console.log(device);
+            this.log(device);
             this.connect(device);
         }).catch((err) => {
-            console.log(err);
-
+            this.log(err);
         })
-        // navigator.bluetooth.requestLEScan({
-
-        // }).then((res) => {
-        //     console.log(res);
-
-        // }).catch((err) => {
-        //     console.log(err);
-
-        // })
     }
 
     connect(device: BluetoothDevice) {
@@ -77,48 +79,48 @@ export default class Bind extends Vue {
             this.mCharacteristic = null as any;
         })
         device.gatt?.connect().then((server) => {
-            console.log(server);
+            this.log(server);
             this.getPrimaryService(server);
         }).catch(err => {
-            console.log(err);
+            this.log(err);
         });
     }
 
     getPrimaryService(server: BluetoothRemoteGATTServer) {
         server.getPrimaryService('0000ae3a-0000-1000-8000-00805f9b34fb').then((service) => {
-            console.log(service);
+            this.log(service);
             setTimeout(() => {
                 service.getCharacteristic('0000ae3c-0000-1000-8000-00805f9b34fb').then((characteristic) => {
-                    console.log("0000ae3c", characteristic);
+                    this.log(characteristic);
                     characteristic.startNotifications().then(() => {
-                        console.log("startNotifications");
+                        this.log("startNotifications");
                     }).catch((err) => {
-                        console.log(err);
+                        this.log(err);
                     }).finally(() => {
                         this.getCharacteristic(service);
                     });
                     characteristic.addEventListener("characteristicvaluechanged", (item: any) => {
-                        console.log(item);
+                        // this.log(item);
                         let data = item.currentTarget.value.buffer;
                         callback(data);
                     })
                 }).catch(err => {
-                    console.log(err);
+                    this.log(err);
                 });
             }, 500);
         }).catch(err => {
-            console.log(err);
+            this.log(err);
         });
     }
 
     getCharacteristic(service: BluetoothRemoteGATTService) {//0000ae3c-0000-1000-8000-00805f9b34fb
         service.getCharacteristic('0000ae3b-0000-1000-8000-00805f9b34fb').then((characteristic) => {
-            console.log(characteristic);
+            this.log(characteristic);
             this.mCharacteristic = characteristic;
             setCharacteristic(characteristic);
             this.mConnected = true;
         }).catch(err => {
-            console.log(err);
+            this.log(err);
         });
     }
 
@@ -143,39 +145,16 @@ export default class Bind extends Vue {
 
     getDeviceStatus() {
         y.getDeviceStatus((data) => {
-            console.log(data);
+            // console.log(data);
             this.print(data);
         })
     }
 
     getSystemInfo() {
         y.getSystemInfo((data) => {
-            console.log(data);
+            // console.log(data);
             this.print(data);
         })
-    }
-
-    currentTask = { count: 5, mode: 1 };
-
-    setLearningTasks() {
-        y.setLearningTasks(this.currentTask, (e) => this.getLearningTasks());
-    }
-    getLearningTasks() {
-        y.getLearningTasks((e) => {
-            a("log", "at pages/set-task/set-task.vue:215", e);
-            console.log("同步成功");
-        });
-    }
-
-    syncBook() {
-        let e = this.mBookId;
-        let t = !0;
-        a("log", "at pages/set-task/set-task.vue:240", "同步课本ID" + e);
-        y.upload(1, e, (e) => {
-            console.log(e);
-
-            "success" == e.status && t && ((t = !1), this.setLearningTasks());
-        });
     }
 
     print(data: any) {
@@ -185,23 +164,41 @@ export default class Bind extends Vue {
         }
         this.mInfo = Object.keys(data).map(o => ({ label: o, value: data[o] }));
     }
+
+    log(data: any) {
+        console.log(data);
+        
+        this.print({
+            obj: data,
+        });
+    }
 }
 </script>
 
 <style lang="scss" scoped>
 .Bind {
     padding: 20px;
-    & > * {
-        & + * {
-            margin-top: 20px;
+    .Layout {
+        & > * {
+            & + * {
+                margin-top: 20px;
+            }
         }
+        width: 200px;
+    }
+    .Line {
+        margin: 10px;
+        width: 1px;
+        background: rgba($color: #000000, $alpha: 0.1);
     }
     .Info {
         .Item {
             .Label {
-                min-width: 150px;
+                font-size: 12px;
+                color: rgba($color: #000000, $alpha: 0.3);
             }
             .Value {
+                word-break: break-all;
             }
         }
     }

@@ -17,7 +17,7 @@
             </VueDraggable>
             <div class="flex-h left">
                 <button @click="clearWords">清空单词</button>
-                <button @click="createBook">导出课本</button>
+                <button @click="exportBook">导出课本</button>
                 <button :disabled="!connected" @click="syncBook">同步课本</button>
             </div>
         </div>

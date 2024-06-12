@@ -267,7 +267,8 @@ export default class Sync extends Vue {
     batchAdd_Run() {
         let items = this.mBatchAdd.text.trim().split("\n");
         items.forEach(item => {
-            let word = words.find(o => o.word == item);
+            let str = item.trim();
+            let word = words.find(o => o.word == str);
             if (!word) {
                 return;
             }

@@ -153,6 +153,12 @@ export default class Sync extends Vue {
         reader.onload = (event) => {
             const data = event.target!.result as ArrayBuffer;
             let block = 32;
+            let a = new Uint8Array(data.slice(4 * block, 4 * block + 1))[0];
+            let b = new Uint8Array(data.slice(6 * block + 5, 6 * block + 6))[0];
+            if (a != 0x01 || b != 0x01) {
+                alert("导入文件有误");
+                return;
+            }
             this.mBook.name = l.bufferString(data.slice(8, 8 + block)) + "";
             this.mBook.press = l.bufferString(data.slice(72, 72 + block)) + "";
             // console.log(l.bufferString(data.slice(6 * length, 6 * length + length * 2)));
@@ -211,8 +217,9 @@ export default class Sync extends Vue {
         let wordIdLength = 11;
         let wordLength = 3 * block;
         let data = new Uint8Array(wordStart + book.words.length * wordLength);
-        data[0] = 0x31;
-        data[3 * block + 24] = 0x31;
+        let bookId = 0x07;
+        data[0] = bookId;
+        data[3 * block + 24] = bookId;
         data[4 * block] = 0x01;
         data.set(encode(book.name), 8);
         data.set(encode(book.press), 72);

@@ -54,3 +54,15 @@ body {
 .h-0 {
     height: 0;
 }
+
+.flex-h {
+    &>button+button {
+        margin-left: 10px;
+    }
+}
+
+.flex-v {
+    &>button+button {
+        margin-top: 10px;
+    }
+}

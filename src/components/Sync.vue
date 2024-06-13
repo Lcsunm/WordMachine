@@ -74,16 +74,6 @@ const uint8ArrayToBinaryFile = (uint8Array: Uint8Array, fileName: string) => {
     URL.revokeObjectURL(url);
 }
 
-const words_test = [
-    { "explain": "n. 调节；条件作用；整修；训练，健身训练\"\n\"v. 以…为条件", "id": 22313, "sentence": "Some experts thought that children's personality was the result of conditioning from parents.", "sentence_explain": "一些专家认为孩子的个性是父母熏陶的结果。", "us_bs": "kYnÈdjYnjŋ", "us_word_sound_local": "22313.mp3", "word": "conditioning" },
-    { "explain": "n. 读者人数；读者们；读者的身份", "id": 22314, "sentence": "The magazine has a readership of over 300,000.", "sentence_explain": "这本杂志的读者超过了30万人。", "us_bs": "ÈriÐdYrjp", "us_word_sound_local": "22314.mp3", "word": "readership" },
-    { "explain": "adj. 可转让的；[数] 可转移的", "id": 22315, "sentence": "Think carefully before you buy it, because this ticket is not transferable.", "sentence_explain": "这张票是不可转让的，所以你要想清楚再买。", "us_bs": "trænsÈf\ÐrYb(Y)l", "us_word_sound_local": "22315.mp3", "word": "transferable" },
-    { "explain": "n. 时间生物学；生物钟学", "id": 22316, "sentence": "The Research Methods in Exercise Chronobiology ⅰ: The Experiment Techniques   ", "sentence_explain": "运动时间生物学研究方法&实验技术", "us_bs": "ÌkrQnobajÈQlYdi", "us_word_sound_local": "22316.mp3", "word": "chronobiology" },
-    { "explain": "v. 下；将从支架上移开；取出\"\n\"n. 下法，完成", "id": 22317, "sentence": "Lucy dismounted and went straight to the hospital.", "sentence_explain": "露西下了车，直接去了医院。", "us_bs": "djsÈmant", "us_word_sound_local": "22317.mp3", "word": "dismount" },
-    { "explain": "n. 高峰；小尖塔；尖峰；极点\"\n\"vt. 造小尖塔；置于尖顶上；置于高处", "id": 22318, "sentence": "He reached the pinnacle of academic achievement after publishing an article in a top journal.", "sentence_explain": "在顶级杂志上发表文章后，他达到了学术成就的顶峰。", "us_bs": "ÈpjnYk(Y)l", "us_word_sound_local": "22318.mp3", "word": "pinnacle" },
-    { "explain": "n. 否定性；消极性", "id": 22319, "sentence": "Often a patient cannot snap out of their negativity that easily.   ", "sentence_explain": "病人常常不能那么容易就打消掉消极的情绪", "us_bs": "ÌneaYÈtjvYti", "us_word_sound_local": "22319.mp3", "word": "negativity" },
-];
-
 @Component({
     components: {
         VueDraggable,

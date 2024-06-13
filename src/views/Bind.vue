@@ -1,22 +1,28 @@
 <template>
-    <div class="Bind wh-100 flex-h">
-        <div class="Layout flex-v left">
-            <button v-if="!mConnected" @click="handleTest">连接</button>
-            <template v-if="mConnected">
-                <button @click="disconnect">取消连接</button>
-                <button @click="bindDevice">激活设备</button>
-                <button @click="getSystemInfo">获取系统信息</button>
-                <button @click="getDeviceStatus">获取设备信息</button>
-            </template>
-            <div class="Info flex-v">
-                <div class="Item flex-v" v-for="(item,index) in mInfo" :key="index">
-                    <div class="Label">{{item.label}}</div>
-                    <div class="Value">{{item.value}}</div>
+    <div class="Bind wh-100 flex-v">
+        <div class="Bar flex-h middle">
+            <div class="Title flex-1">单词机</div>
+            <img class="Github button" src="img/github.png" @click="handleGit">
+        </div>
+        <div class="Content flex-1 flex-h">
+            <div class="Layout flex-v left">
+                <button v-if="!mConnected" @click="handleTest">连接</button>
+                <template v-if="mConnected">
+                    <button @click="disconnect">取消连接</button>
+                    <button @click="bindDevice">激活设备</button>
+                    <button @click="getSystemInfo">获取系统信息</button>
+                    <button @click="getDeviceStatus">获取设备信息</button>
+                </template>
+                <div class="Info flex-v">
+                    <div class="Item flex-v" v-for="(item,index) in mInfo" :key="index">
+                        <div class="Label">{{item.label}}</div>
+                        <div class="Value">{{item.value}}</div>
+                    </div>
                 </div>
             </div>
+            <div class="Line"></div>
+            <Sync class="flex-1" :connected="mConnected" :print="print"></Sync>
         </div>
-        <div class="Line"></div>
-        <Sync class="flex-1" :connected="mConnected" :print="print"></Sync>
     </div>
 </template>
 
@@ -25,8 +31,6 @@ import { Vue, Component, Prop, Watch } from "vue-property-decorator";
 import { l, p, h, g, v, e, y, a, callback, setCharacteristic } from "@/tool/DCK";
 // import XLSX from "xlsx";
 import Sync from "@/components/Sync.vue";
-
-export const OpenSource = "开源地址:https://github.com/Lcsunm/WordMachine";
 
 @Component({
     components: {
@@ -157,6 +161,10 @@ export default class Bind extends Vue {
         })
     }
 
+    handleGit() {
+        window.open("https://github.com/Lcsunm/WordMachine", "_blank");
+    }
+
     print(data: any) {
         if (!data) {
             this.mInfo = [];
@@ -167,7 +175,7 @@ export default class Bind extends Vue {
 
     log(data: any) {
         console.log(data);
-        
+
         this.print({
             obj: data,
         });
@@ -177,29 +185,37 @@ export default class Bind extends Vue {
 
 <style lang="scss" scoped>
 .Bind {
-    padding: 20px;
-    .Layout {
-        & > * {
-            & + * {
-                margin-top: 20px;
+    & > .Content {
+        padding: 20px;
+        .Layout {
+            width: 200px;
+        }
+        .Line {
+            margin: 10px;
+            width: 1px;
+            background: rgba($color: #000000, $alpha: 0.1);
+        }
+        .Info {
+            margin-top: 20px;
+            .Item {
+                .Label {
+                    font-size: 12px;
+                    color: rgba($color: #000000, $alpha: 0.3);
+                }
+                .Value {
+                    word-break: break-all;
+                }
             }
         }
-        width: 200px;
     }
-    .Line {
-        margin: 10px;
-        width: 1px;
-        background: rgba($color: #000000, $alpha: 0.1);
-    }
-    .Info {
-        .Item {
-            .Label {
-                font-size: 12px;
-                color: rgba($color: #000000, $alpha: 0.3);
-            }
-            .Value {
-                word-break: break-all;
-            }
+    .Bar {
+        background: white;
+        box-shadow: 0 0 5px rgba($color: #000000, $alpha: 0.1);
+        padding: 10px 16px;
+        .Github {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
         }
     }
 }
